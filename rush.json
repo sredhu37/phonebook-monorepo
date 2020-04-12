@@ -26,6 +26,10 @@
     {
       "packageName": "phonebook-backend",
       "projectFolder": "backend"
+    },
+    {
+      "packageName": "phonebook-frontend",
+      "projectFolder": "frontend"
     }
   ]
 }
