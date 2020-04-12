@@ -1,7 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
-
+require('dotenv').config({path: __dirname + '/.env'});
 
 const port = process.env.PORT || 3001;
 const host = process.env.HOST || "http://127.0.0.1";
