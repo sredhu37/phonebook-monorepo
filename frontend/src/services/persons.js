@@ -1,5 +1,11 @@
 import axios from 'axios';
-const baseUrl = 'http://localhost:3001/api/persons';
+
+console.log(`Host: ${process.env.REACT_APP_BACKEND_HOST}`);
+console.log(`Port: ${process.env.REACT_APP_BACKEND_PORT}`);
+
+const port = process.env.REACT_APP_BACKEND_PORT || 3001;
+const hostUrl = process.env.REACT_APP_BACKEND_HOST || `http://localhost:${port}`;
+const baseUrl = `${hostUrl}/api/persons`;
 
 const getAll = () => {
     return axios.get(baseUrl);
