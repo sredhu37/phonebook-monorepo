@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 require('dotenv').config({path: __dirname + './../.env'});
 
+// MongoDb atlas account: redhu.sunny1994@gmail.com/I with @
+// DB name: phonebook
+// Username: read-write
+// Password: read-write
+
 const connectToMongoDb = (clusterName, dbName) => {
   return new Promise((resolve, reject) => {
     const username = process.env.MONGO_USER;
@@ -39,9 +44,21 @@ const getContactSchema = () => {
   const Schema = mongoose.Schema;
 
   return new Schema({
-    'name': String,
-    'number': String,
-    'id': Number,
+    'name': {
+      minlength: 3,
+      type: String,
+      required: true
+    },
+    'number': {
+      type: Number,
+      length: 10,
+      required: true
+    },
+    'id': {
+      minLength: 1,
+      type: Number,
+      required: true
+    },
   });
 };
 

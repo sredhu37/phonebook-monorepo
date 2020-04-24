@@ -12,27 +12,6 @@ app.use(express.json());
 app.use(morgan('tiny'));
 app.use(cors());
 
-// MongoDb atlas account: redhu.sunny1994@gmail.com/I with @
-// DB name: phonebook
-// Username: read-write
-// Password: read-write
-// Connection String: mongodb+srv://read-write:<password>@phonebook-x5vx1.mongodb.net/test?retryWrites=true&w=majority
-// const persons = [
-//   {
-//     name: 'Tony Stark',
-//     number: '1234',
-//     id: 1,
-//   },
-//   {
-//     name: 'Thor',
-//     number: '34343',
-//     id: 2,
-//   }, {
-//     name: 'Dr. Steven Strange',
-//     number: '45667',
-//     id: 3,
-//   },
-// ];
 
 app.get('/', (req, res) => {
   res.send('Congrats... This page seems to be working fine!');
