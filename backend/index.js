@@ -1,11 +1,12 @@
 const express = require('express');
-const mongoService = require('./services/mongoService');
+const contactService = require('./models/contact');
 const morgan = require('morgan');
 const cors = require('cors');
-require('dotenv').config({path: __dirname + '/.env'});
+const config = require('./utils/config');
+const logger = require('./utils/logger');
 
-const port = process.env.PORT || 3001;
-const host = process.env.HOST || 'http://127.0.0.1';
+const port = config.APPLICATION_PORT;
+const host = config.APPLICATION_HOST;
 
 const app = express();
 app.use(express.json());
@@ -18,7 +19,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/persons', (req, res) => {
-  mongoService.getAllContacts().then((response) => {
+  contactService.getAllContacts().then((response) => {
     res.send(response);
   }).catch((error) => {
     res.status(404).send(error);
@@ -28,7 +29,7 @@ app.get('/api/persons', (req, res) => {
 app.get('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id);
 
-  mongoService.getSingleContact(id)
+  contactService.getSingleContact(id)
       .then((response) => {
         res.send(response);
       })
@@ -38,7 +39,7 @@ app.get('/api/persons/:id', (req, res) => {
 });
 
 app.get('/info', (req, res) => {
-  mongoService.getAllContacts().then((response) => {
+  contactService.getAllContacts().then((response) => {
     const numOfContacts = response.length;
     let str = `Phonebook has info for ${numOfContacts} people<br/>`;
     str += Date();
@@ -51,7 +52,7 @@ app.get('/info', (req, res) => {
 app.delete('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id);
 
-  mongoService.deleteSingleContact(id)
+  contactService.deleteSingleContact(id)
       .then((response) => {
         res.send(response);
       })
@@ -61,31 +62,31 @@ app.delete('/api/persons/:id', (req, res) => {
 });
 
 app.post('/api/persons', (req, res) => {
-  console.log('Received POST request in Backend!');
+  logger.info('Received POST request in Backend!');
   const id = Math.floor(Math.random() * 100000);
 
   const body = req.body;
 
   if (body && body.name && body.number) {
-    mongoService.getSingleContactByName(body.name)
+    contactService.getSingleContactByName(body.name)
         .then((response) => {
           if (response.length < 1) {
-            console.log('Trying to add new contact...');
-            return mongoService.addNewContact(body.name, body.number, id);
+            logger.info('Trying to add new contact...');
+            return contactService.addNewContact(body.name, body.number, id);
           } else {
             res.status(400).send({error: `Person with name: 
         ${body.name} already exists!`, count: response.length});
           }
         })
         .then((response) => {
-          console.log('Contact added successfully!');
+          logger.info('Contact added successfully!');
           res.status(200).send(response);
         })
         .catch((error) => {
           res.send(error);
         });
   } else {
-    console.log('Wrong body in POST request!');
+    logger.error('Wrong body in POST request!');
     res.status(400).send({error: 'Wrong body in POST request!'});
   }
 });
@@ -106,7 +107,7 @@ app.put('/api/persons/:id', (req, res) => {
       newNumber = body.number;
     }
 
-    mongoService.updateSingleContact(id, {name: newName, number: newNumber})
+    contactService.updateSingleContact(id, {name: newName, number: newNumber})
         .then((response) => {
           res.send(response);
         })
@@ -121,5 +122,5 @@ app.put('/api/persons/:id', (req, res) => {
 
 
 app.listen(port, () => {
-  console.log(`Listening on ${host}:${port} ...`);
+  logger.info(`Listening on ${host}:${port} ...`);
 });

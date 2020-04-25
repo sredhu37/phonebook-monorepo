@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-require('dotenv').config({path: __dirname + './../.env'});
+const config = require('../utils/config');
+const logger = require('../utils/logger');
 
 // MongoDb atlas account: redhu.sunny1994@gmail.com/I with @
 // DB name: phonebook
@@ -8,33 +9,33 @@ require('dotenv').config({path: __dirname + './../.env'});
 
 const connectToMongoDb = (clusterName, dbName) => {
   return new Promise((resolve, reject) => {
-    const username = process.env.MONGO_USER;
-    const password = process.env.MONGO_PASSWORD;
-    // console.log(`__dirname: ${__dirname}
-    //  User: ${username}; Password: ${password}`);
+    const username = config.MONGO_USER;
+    const password = config.MONGO_PASSWORD;
+    // logger.info(`__dirname: ${__dirname}
+    // User: ${username}; Password: ${password}`);
 
     if (!(username && password)) {
       const resultMessage = `
     Unable to find username or password for MongoDB connection...
     Please set MONGO_USER and MONGO_PASSWORD environment variables properly!
         `;
-      // console.log(resultMessage);
+      // logger.error(resultMessage);
       reject(resultMessage);
     }
 
     const connectionString = `mongodb+srv://${username}:${password}@${clusterName}-x5vx1.mongodb.net/${dbName}?retryWrites=true&w=majority`;
-    console.log(`ConnectionString: ${connectionString}`);
+    // logger.info(`ConnectionString: ${connectionString}`);
 
     mongoose.connect(connectionString, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     }).then((response) => {
       const resultMessage = `Successfully connected to MongoDB: ${response}`;
-      // console.log(resultMessage);
+      // logger.info(resultMessage);
       resolve(resultMessage);
     }).catch((error) => {
       const resultMessage = `ERROR: Unable to connect to MongoDB!: ${error}`;
-      // console.log(resultMessage);
+      logger.error(resultMessage);
       reject(resultMessage);
     });
   });
@@ -47,17 +48,17 @@ const getContactSchema = () => {
     'name': {
       minlength: 3,
       type: String,
-      required: true
+      required: true,
     },
     'number': {
       type: Number,
       length: 10,
-      required: true
+      required: true,
     },
     'id': {
       minLength: 1,
       type: Number,
-      required: true
+      required: true,
     },
   });
 };
@@ -132,15 +133,15 @@ const searchContacts = ({name, number, id}) => {
 
           const queryFilterArray = [];
           if (id) {
-            console.log(`Including id: ${id} in the searchQuery.`);
+            logger.info(`Including id: ${id} in the searchQuery.`);
             queryFilterArray.push({id: id});
           }
           if (name) {
-            console.log(`Including name: ${name} in the searchQuery.`);
+            logger.info(`Including name: ${name} in the searchQuery.`);
             queryFilterArray.push({name: name});
           }
           if (number) {
-            console.log(`Including number: ${number} in the searchQuery.`);
+            logger.info(`Including number: ${number} in the searchQuery.`);
             queryFilterArray.push({number: number});
           }
 
@@ -150,7 +151,7 @@ const searchContacts = ({name, number, id}) => {
         })
         .then((response) => {
           if (response.length < 1) {
-            console.log(`No matching result for the specified query: 
+            logger.warn(`No matching result for the specified query: 
             {name: ${name}, number: ${number}, id: ${id}}!`);
           }
           mongoose.connection.close();
@@ -209,9 +210,9 @@ const updateSingleContact = (id, {name, number}) => {
             updatedProperties.number = number;
           }
 
-          // console.log('name: ', name);
-          // console.log('number: ', number);
-          // console.log('UpdatedProperties: ', updatedProperties);
+          // logger.info('name: ', name);
+          // logger.info('number: ', number);
+          // logger.info('UpdatedProperties: ', updatedProperties);
           return Contact.updateOne({id: id}, updatedProperties);
         })
         .then((response) => {
@@ -228,47 +229,47 @@ const updateSingleContact = (id, {name, number}) => {
 
 // getAllContacts()
 //     .then((response) => {
-//       console.log(`GetAllContacts RESPONSE: ${response}`);
+//       logger.info(`GetAllContacts RESPONSE: ${response}`);
 //     })
 //     .catch((error) => {
-//       console.log(`GetAllContacts ERROR: ${error}`);
+//       logger.error(`GetAllContacts ERROR: ${error}`);
 //     });
 
 // addNewContact('dsfs', 67654, 334)
 //     .then((response) => {
-//       console.log(`AddNewContact RESPONSE: ${response}`);
+//       logger.info(`AddNewContact RESPONSE: ${response}`);
 //     })
 //     .catch((error) => {
-//       console.log(`AddNewContact ERROR: ${error}`);
+//       logger.error(`AddNewContact ERROR: ${error}`);
 //     });
 
 // searchContacts({name: '', number: '', id: 189})
 //     .then((response) => {
-//       console.log(`SearchContacts RESPONSE: ${response}`);
+//       logger.info(`SearchContacts RESPONSE: ${response}`);
 //     }).catch((error) => {
-//       console.log(`SearchContacts ERROR: ${error}`);
+//       logger.error(`SearchContacts ERROR: ${error}`);
 //     });
 
 // getSingleContact(189)
 // .then((response) => {
-//   console.log(`GetSingleContact RESPONSE: ${response}`);
+//   logger.info(`GetSingleContact RESPONSE: ${response}`);
 // }).catch((error) => {
-//   console.log(`GetSingleContact ERROR: ${error}`);
+//   logger.error(`GetSingleContact ERROR: ${error}`);
 // });
 
 // deleteSingleContact(22323)
 //     .then((response) => {
-//       console.log('DeleteSingleContact RESPONSE: ', response);
+//       logger.info('DeleteSingleContact RESPONSE: ', response);
 //     }).catch((error) => {
-//       console.log(`DeleteSingleContact ERROR: ${error}`);
+//       logger.error(`DeleteSingleContact ERROR: ${error}`);
 //     });
 
 // getSingleContactByName('abcd')
 //     .then((response) => {
-//       console.log('GetContactsByName RESPONSE: ', response);
+//       logger.info('GetContactsByName RESPONSE: ', response);
 //     })
 //     .catch((error) => {
-//       console.log(`GetContactsByName ERROR: ${error}`);
+//       logger.error(`GetContactsByName ERROR: ${error}`);
 //     });
 
 module.exports = {
