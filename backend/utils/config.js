@@ -1,4 +1,4 @@
-const logger = require('./logger');
+// const logger = require('./logger');
 require('dotenv').config({path: __dirname + '/../.env'});
 
 const localhost = 'http://127.0.0.1';
