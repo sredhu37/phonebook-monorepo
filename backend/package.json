@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=test echo \"Error: no test specified\" && exit 1",
-    "start": "cross-env NODE_ENV=production node index.js",
-    "dev": "cross-env NODE_ENV=development npm run lint-fix && nodemon index.js",
+    "test": "cross-env NODE_ENV=TEST echo \"Error: no test specified\" && exit 1",
+    "start": "cross-env NODE_ENV=PROD node index.js",
+    "dev": "cross-env NODE_ENV=DEV npm run lint-fix && nodemon index.js",
     "build": "",
     "lint": "eslint ./**",
     "lint-fix": "eslint ./** --fix"
