@@ -7,26 +7,21 @@ const logger = require('../utils/logger');
 // Username: read-write
 // Password: read-write
 
-const connectToMongoDb = (clusterName, dbName) => {
+const connectToMongoDb = () => {
   return new Promise((resolve, reject) => {
-    const username = config.MONGO_USER;
-    const password = config.MONGO_PASSWORD;
-    // logger.info(`__dirname: ${__dirname}
-    // User: ${username}; Password: ${password}`);
+    const mongoUri = config.MONGO_URI;
+    // logger.info(`mongoUri: ${mongoUri}`);
 
-    if (!(username && password)) {
+    if (!(mongoUri)) {
       const resultMessage = `
-    Unable to find username or password for MongoDB connection...
-    Please set MONGO_USER and MONGO_PASSWORD environment variables properly!
+    Unable to find mongoUri for MongoDB connection...
+    Please set MONGO_URI environment variable properly!
         `;
       // logger.error(resultMessage);
       reject(resultMessage);
     }
 
-    const connectionString = `mongodb+srv://${username}:${password}@${clusterName}-x5vx1.mongodb.net/${dbName}?retryWrites=true&w=majority`;
-    // logger.info(`ConnectionString: ${connectionString}`);
-
-    mongoose.connect(connectionString, {
+    mongoose.connect(mongoUri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     }).then((response) => {
@@ -74,10 +69,7 @@ const getModel = (modelName, schema) => {
 
 const addNewContact = (name, number, id) => {
   return new Promise((resolve, reject) => {
-    const clusterName = 'phonebook';
-    const dbName = 'Phonebook';
-
-    connectToMongoDb(clusterName, dbName)
+    connectToMongoDb()
         .then((response) => {
           const contactSchema = getContactSchema();
           const Contact = getModel('Contact', contactSchema);
@@ -102,10 +94,7 @@ const addNewContact = (name, number, id) => {
 
 const getAllContacts = () => {
   return new Promise((resolve, reject) => {
-    const clusterName = 'phonebook';
-    const dbName = 'Phonebook';
-
-    connectToMongoDb(clusterName, dbName)
+    connectToMongoDb()
         .then((response) => {
           const contactSchema = getContactSchema();
           const Contact = getModel('Contact', contactSchema);
@@ -124,9 +113,7 @@ const getAllContacts = () => {
 
 const searchContacts = ({name, number, id}) => {
   return new Promise((resolve, reject) => {
-    const clusterName = 'phonebook';
-    const dbName = 'Phonebook';
-    connectToMongoDb(clusterName, dbName)
+    connectToMongoDb()
         .then((response) => {
           const contactSchema = getContactSchema();
           const Contact = getModel('Contact', contactSchema);
@@ -173,9 +160,7 @@ const getSingleContactByName = (name) => {
 
 const deleteSingleContact = (id) => {
   return new Promise((resolve, reject) => {
-    const clusterName = 'phonebook';
-    const dbName = 'Phonebook';
-    connectToMongoDb(clusterName, dbName)
+    connectToMongoDb()
         .then((response) => {
           const contactSchema = getContactSchema();
           const Contact = getModel('Contact', contactSchema);
@@ -194,10 +179,7 @@ const deleteSingleContact = (id) => {
 
 const updateSingleContact = (id, {name, number}) => {
   return new Promise((resolve, reject) => {
-    const clusterName = 'phonebook';
-    const dbName = 'Phonebook';
-
-    connectToMongoDb(clusterName, dbName)
+    connectToMongoDb()
         .then((response) => {
           const contactSchema = getContactSchema();
           const Contact = getModel('Contact', contactSchema);
