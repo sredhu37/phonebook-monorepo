@@ -3,11 +3,20 @@ const morgan = require('morgan');
 const cors = require('cors');
 const config = require('./utils/config');
 const logger = require('./utils/logger');
-const contactsRouter = require('./controllers/contacts');
+const {connectToMongoDb, contactsRouter} = require('./controllers/contacts');
 const rootRouter = require('./controllers/root');
+
 
 const port = config.APPLICATION_PORT;
 const host = config.APPLICATION_HOST;
+
+connectToMongoDb()
+    .then((response) => {
+      logger.info('Connected successfully to MongoDB: ', response);
+    })
+    .catch((error) => {
+      logger.error('ERROR: some issue while connecting to MongoDB: ', error);
+    });
 
 const app = express();
 app.use(express.json());
